@@ -46,7 +46,8 @@ public class ProductManager {
         return false;
     }
 
-    public Product[] getAllProduct() {
+    public Product[] findAll() {
         return repositories.getAllProduct();
     }
+
 }
