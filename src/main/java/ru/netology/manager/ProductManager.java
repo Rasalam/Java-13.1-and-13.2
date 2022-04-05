@@ -8,11 +8,8 @@ import ru.netology.repository.ProductRepository;
 public class ProductManager {
     private ProductRepository repositories = new ProductRepository();
 
-    public ProductManager() {
-    }
-
     public void add(Product product) {
-        repositories.saveProduct(product);
+        repositories.saveProductIdCheck(product);
     }
 
     public Product[] searchBy(String search) {

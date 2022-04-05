@@ -1,92 +1,69 @@
 package ru.netology.repository;
 
 import org.junit.jupiter.api.Test;
-import ru.netology.domain.Book;
-import ru.netology.domain.Product;
-import ru.netology.domain.Smartphone;
+import ru.netology.domain.*;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductRepositoryTest {
 
-    ProductRepository productRepository = new ProductRepository();
+    ProductRepository repository = new ProductRepository();
 
     public Book book1 = new Book(1, "Book", 530, "Chekhov");
     public Book book2 = new Book(2, "Book", 520, "Chekhov");
     public Book book3 = new Book(3, "Book", 500, "Gogol");
     public Book book4 = new Book(4, "Book", 550, "Pushkin");
-    public Book book5 = new Book(5, "Book", 500, "Gogol");
     public Smartphone smartphone1 = new Smartphone(6, "Smartphone", 100000, "Apple");
     public Smartphone smartphone2 = new Smartphone(7, "Smartphone", 25000, "Xiaomi");
     public Smartphone smartphone3 = new Smartphone(8, "Smartphone", 10000, "Vivo");
-    public Smartphone smartphone4 = new Smartphone(9, "Smartphone", 32000, "Samsung");
-    public Smartphone smartphone5 = new Smartphone(10, "Smartphone", 40000, "Samsung");
 
     public void prepareProduct() {
-        productRepository.saveProduct(book1);
-        productRepository.saveProduct(book2);
-        productRepository.saveProduct(book3);
-        productRepository.saveProduct(book4);
-        productRepository.saveProduct(book5);
-        productRepository.saveProduct(smartphone1);
-        productRepository.saveProduct(smartphone2);
-        productRepository.saveProduct(smartphone3);
-        productRepository.saveProduct(smartphone4);
-        productRepository.saveProduct(smartphone5);
+        repository.saveProduct(book1);
+        repository.saveProduct(book2);
+        repository.saveProduct(book3);
+        repository.saveProduct(smartphone1);
+        repository.saveProduct(smartphone2);
+        repository.saveProduct(smartphone3);
+
     }
 
     @Test
-    // Должен добавить 1 смартфон
-    public void shouldSaveOneSmartphoneTest() {
+    // RemoveById
+    public void shouldDeleteSuccessfullyTest() {
+        int removeId = 2;
         prepareProduct();
-        Smartphone smartphone6 = new Smartphone(6, "Smartphone", 41000, "Samsung");
-        productRepository.saveProduct(smartphone6);
-        Product[] expected = new Product[]{book1, book2, book3, book4, book5, smartphone1, smartphone2, smartphone3, smartphone4, smartphone5, smartphone6};
-        Product[] actual = productRepository.getAllProduct();
-        assertArrayEquals(expected, actual);
+        Product[] expected = repository.removeById(removeId);
+        Product[] actual = new Product[]{book1, book3, smartphone1, smartphone2, smartphone3};
+        assertArrayEquals(actual, expected);
     }
 
     @Test
-    // Должен добавить 1 книгу
-    public void shouldSaveOneBookProductTest() {
+    //RemoveById
+    public void shouldThrowExceptionTest() {
+        int removeId = 0;
         prepareProduct();
-        Book book6 = new Book(6, "Book", 410, "Gogol");
-        productRepository.saveProduct(book6);
-        Product[] expected = new Product[]{book1, book2, book3, book4, book5, smartphone1, smartphone2, smartphone3, smartphone4, smartphone5, book6};
-        Product[] actual = productRepository.getAllProduct();
-        assertArrayEquals(expected, actual);
+        assertThrows(NotFoundException.class, () -> repository.removeById(removeId));
     }
 
     @Test
-    // Должен добавить 1 книгу и 1 смартфон
-    public void shouldSaveOneBookAndOneSmartphoneProductTest() {
+    // saveProductIdCheck
+    public void shouldAddItemTest() {
         prepareProduct();
-        Book book6 = new Book(6, "Book", 410, "Gogol");
-        Smartphone smartphone6 = new Smartphone(6, "Smartphone", 41000, "Samsung");
-        productRepository.saveProduct(book6);
-        productRepository.saveProduct(smartphone6);
-        Product[] expected = new Product[]{book1, book2, book3, book4, book5, smartphone1, smartphone2, smartphone3, smartphone4, smartphone5, book6, smartphone6};
-        Product[] actual = productRepository.getAllProduct();
-        assertArrayEquals(expected, actual);
+        repository.saveProductIdCheck(book4);
+        Product[] expected = repository.getAllProduct();
+        Product[] actual = new Product[]{book1, book2, book3, smartphone1, smartphone2, smartphone3, book4};
+        assertArrayEquals(actual, expected);
     }
 
     @Test
-    // Должен вернуть все элементы продкуты
-    public void shouldReturnAllProductTest() {
+    // saveProductIdCheck
+    public void shouldTrowExceptionTest() {
         prepareProduct();
-        Product[] expected = productRepository.getAllProduct();
-        Product[] actual = new Product[]{book1, book2, book3, book4, book5, smartphone1, smartphone2, smartphone3, smartphone4, smartphone5};
-        assertArrayEquals(expected, actual);
-    }
+        assertThrows(AlreadyExistsException.class, () -> repository.saveProductIdCheck(book3));
 
-    @Test
-    // Должен удалить продукт из репозитория по его Id
-    public void shouldRemoveItemByIdTest() {
-        prepareProduct();
-        int id = 5;
-        productRepository.removeById(id);
-        Product[] expected = productRepository.getAllProduct();
-        Product[] actual = new Product[]{book1, book2, book3, book4, smartphone1, smartphone2, smartphone3, smartphone4, smartphone5};
-        assertArrayEquals(expected, actual);
     }
 }
+
+
+
